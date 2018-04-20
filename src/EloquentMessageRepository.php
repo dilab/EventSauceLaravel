@@ -44,14 +44,17 @@ class EloquentMessageRepository extends Model implements MessageRepository
 
         }, $messages);
 
-        self::insert($data);
+
+        DB::transaction(function () use ($data) {
+            self::insert($data);
+        });
     }
 
     public function retrieveAll(AggregateRootId $id): Generator
     {
         $messages = DB::table('domain_messages')
-            ->where('aggregate_root_id', $id->toString())
             ->select('payload')
+            ->where('aggregate_root_id', $id->toString())
             ->orderBy('time_of_recording', 'ASC')
             ->get();
 
@@ -60,4 +63,15 @@ class EloquentMessageRepository extends Model implements MessageRepository
         }
     }
 
+    public function retrieveEverything(): Generator
+    {
+        $messages = DB::table('domain_messages')
+            ->select('payload')
+            ->orderBy('time_of_recording', 'ASC')
+            ->get();
+
+        foreach ($messages as $message) {
+            yield from $this->serializer->unserializePayload(json_decode($message->payload, true));
+        }
+    }
 }

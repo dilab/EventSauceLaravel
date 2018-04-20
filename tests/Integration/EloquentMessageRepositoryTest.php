@@ -59,4 +59,30 @@ class EloquentMessageRepositoryTest extends TestCase
         $this->assertEquals($message, $retrievedMessage);
     }
 
+    /**
+     * @test
+     */
+    public function persisting_events_without_aggregate_root_ids()
+    {
+        $eventId = Uuid::uuid4();
+        $message = $this->decorator->decorate(new Message(new TestEvent((new TestClock())->pointInTime()), [
+            Header::EVENT_ID => $eventId->toString(),
+        ]));
+        $this->repository->persist($message);
+        $persistedMessages = iterator_to_array($this->repository->retrieveEverything());
+        $this->assertCount(1, $persistedMessages);
+        $this->assertEquals($message, $persistedMessages[0]);
+    }
+
+    /**
+     * @test
+     */
+    public function persisting_events_without_event_ids()
+    {
+        $message = $this->decorator->decorate(new Message(new TestEvent((new TestClock())->pointInTime())));
+        $this->repository->persist($message);
+        $persistedMessages = iterator_to_array($this->repository->retrieveEverything());
+        $this->assertCount(1, $persistedMessages);
+        $this->assertNotEquals($message, $persistedMessages[0]);
+    }
 }
