@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\Backup;
+namespace Dilab\EventSauceLaravel;
 
 use Illuminate\Support\ServiceProvider;
 use Spatie\Backup\Commands\ListCommand;

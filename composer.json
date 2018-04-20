@@ -10,14 +10,15 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Dilab\\EventSauceLaravel\\Tests\\": "tests"
+      "Dilab\\EventSauceLaravel\\Test\\": "tests"
     }
   },
   "require": {
     "eventsauce/eventsauce": "^0.3.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^5.7"
+    "phpunit/phpunit": "~7.0",
+    "orchestra/testbench": "^3.6"
   },
   "license": "MIT",
   "authors": [
