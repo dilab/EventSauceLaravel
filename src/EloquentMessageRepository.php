@@ -1,30 +1,63 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: xu
- * Date: 19/4/18
- * Time: 11:57 AM
- */
 
 namespace Dilab\EventSauceLaravel;
 
 
-use EventSauce\EventSourcing\AggregateRootId;
-use EventSauce\EventSourcing\Message;
-use EventSauce\EventSourcing\MessageDispatcher;
-use EventSauce\EventSourcing\MessageRepository;
+use EventSauce\EventSourcing\Header;
 use Generator;
+use EventSauce\EventSourcing\Message;
+use Illuminate\Database\Eloquent\Model;
+use EventSauce\EventSourcing\AggregateRootId;
+use EventSauce\EventSourcing\MessageRepository;
+use EventSauce\EventSourcing\Serialization\MessageSerializer;
+use Illuminate\Support\Facades\DB;
+use Ramsey\Uuid\Uuid;
 
-class EloquentMessageRepository implements MessageRepository
+class EloquentMessageRepository extends Model implements MessageRepository
 {
+    protected $table = 'domain_messages';
+
+    /**
+     * @var MessageSerializer
+     */
+    private $serializer;
+
+    public function __construct(MessageSerializer $serializer, array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->serializer = $serializer;
+    }
+
     public function persist(Message ...$messages)
     {
-        // TODO: Implement persist() method.
+        $data = array_map(function (Message $message) {
+
+            $payload = $this->serializer->serializeMessage($message);
+
+            return [
+                'event_id' => $payload['headers'][Header::EVENT_ID] = $payload['headers'][Header::EVENT_ID] ?? Uuid::uuid4()->toString(),
+                'event_type' => $payload['headers'][Header::EVENT_TYPE],
+                'aggregate_root_id' => $payload['headers'][Header::AGGREGATE_ROOT_ID] ?? null,
+                'time_of_recording' => $payload['headers'][Header::TIME_OF_RECORDING],
+                'payload' => json_encode($payload, JSON_PRETTY_PRINT)
+            ];
+
+        }, $messages);
+
+        self::insert($data);
     }
 
     public function retrieveAll(AggregateRootId $id): Generator
     {
-        // TODO: Implement retrieveAll() method.
+        $messages = DB::table('domain_messages')
+            ->where('aggregate_root_id', $id->toString())
+            ->select('payload')
+            ->orderBy('time_of_recording', 'ASC')
+            ->get();
+
+        foreach ($messages as $message) {
+            yield from $this->serializer->unserializePayload(json_decode($message->payload, true));
+        }
     }
 
 }

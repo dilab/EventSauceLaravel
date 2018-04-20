@@ -19,7 +19,7 @@ abstract class TestCase extends Orchestra
 
         parent::setUp();
 
-        $this->loadMigrationsFrom(__DIR__ . '/../migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../../migrations');
     }
 
     /**
@@ -51,16 +51,5 @@ abstract class TestCase extends Orchestra
         $app['config']->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
     }
 
-    /**
-     * @param \Illuminate\Foundation\Application $app
-     */
-    protected function setUpDatabase($app)
-    {
-        touch($this->testHelper->getTempDirectory().'/database.sqlite');
 
-//        $app['db']->connection()->getSchemaBuilder()->create('test_models', function (Blueprint $table) {
-//            $table->increments('id');
-//            $table->string('name');
-//        });
-    }
 }
