@@ -41,6 +41,8 @@ abstract class TestCase extends Orchestra
     {
         $this->testHelper->initializeTempDirectory();
 
+        $app['config']->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
+
         $app['config']->set('database.connections.db1', [
             'driver' => 'sqlite',
             'database' => $this->testHelper->createSQLiteDatabase('database1.sqlite'),
@@ -48,7 +50,8 @@ abstract class TestCase extends Orchestra
 
         $app['config']->set('database.default', 'db1');
 
-        $app['config']->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
+        $app['config']->set('queue.default', 'sync');
+
     }
 
 
