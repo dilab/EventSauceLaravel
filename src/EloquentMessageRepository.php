@@ -52,7 +52,7 @@ class EloquentMessageRepository extends Model implements MessageRepository
 
     public function retrieveAll(AggregateRootId $id): Generator
     {
-        $messages = DB::table('domain_messages')
+        $messages = DB::table($this->table)
             ->select('payload')
             ->where('aggregate_root_id', $id->toString())
             ->orderBy('time_of_recording', 'ASC')
@@ -65,7 +65,7 @@ class EloquentMessageRepository extends Model implements MessageRepository
 
     public function retrieveEverything(): Generator
     {
-        $messages = DB::table('domain_messages')
+        $messages = DB::table($this->table)
             ->select('payload')
             ->orderBy('time_of_recording', 'ASC')
             ->get();
