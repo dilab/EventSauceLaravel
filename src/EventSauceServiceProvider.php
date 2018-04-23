@@ -3,12 +3,6 @@
 namespace Dilab\EventSauceLaravel;
 
 use Illuminate\Support\ServiceProvider;
-use Spatie\Backup\Commands\ListCommand;
-use Spatie\Backup\Helpers\ConsoleOutput;
-use Spatie\Backup\Commands\BackupCommand;
-use Spatie\Backup\Commands\CleanupCommand;
-use Spatie\Backup\Commands\MonitorCommand;
-use Spatie\Backup\Notifications\EventHandler;
 
 class EventSauceServiceProvider extends ServiceProvider
 {
