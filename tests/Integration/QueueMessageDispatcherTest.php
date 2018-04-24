@@ -22,7 +22,7 @@ class QueueMessageDispatcherTest extends TestCase
     {
         // Arrange
         Bus::fake();
-        
+
         $collector = new CollectingConsumer();
         $dispatcher = new QueueMessageDispatcher($collector);
         $event = new TestEvent();
@@ -35,6 +35,6 @@ class QueueMessageDispatcherTest extends TestCase
         Bus::assertDispatched(QueueJob::class, function (QueueJob $job) use ($collector, $message) {
             return $job->message == $message && $job->consumer == $collector;
         });
-
     }
+
 }
