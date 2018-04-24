@@ -2,9 +2,11 @@
 
 namespace Dilab\EventSauceLaravel\Test\Integration;
 
+use Dilab\EventSauceLaravel\QueueJob;
 use Dilab\EventSauceLaravel\QueueMessageDispatcher;
 use EventSauce\EventSourcing\DefaultHeadersDecorator;
 use EventSauce\EventSourcing\Message;
+use Illuminate\Support\Facades\Bus;
 
 class QueueMessageDispatcherTest extends TestCase
 {
@@ -19,6 +21,8 @@ class QueueMessageDispatcherTest extends TestCase
     public function it_works()
     {
         // Arrange
+        Bus::fake();
+        
         $collector = new CollectingConsumer();
         $dispatcher = new QueueMessageDispatcher($collector);
         $event = new TestEvent();
@@ -28,6 +32,9 @@ class QueueMessageDispatcherTest extends TestCase
         $dispatcher->dispatch($message);
 
         // Assert
-        $this->assertEquals($message, $collector->message);
+        Bus::assertDispatched(QueueJob::class, function (QueueJob $job) use ($collector, $message) {
+            return $job->message == $message && $job->consumer == $collector;
+        });
+
     }
 }

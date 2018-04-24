@@ -2,11 +2,10 @@
 
 namespace Dilab\EventSauceLaravel;
 
-
 use EventSauce\EventSourcing\Consumer;
 use EventSauce\EventSourcing\Message;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 
 class QueueJob implements ShouldQueue
 {
@@ -15,12 +14,12 @@ class QueueJob implements ShouldQueue
     /**
      * @var Consumer
      */
-    protected $consumer;
+    public $consumer;
 
     /**
      * @var Message
      */
-    protected $message;
+    public $message;
     
     /**
      * QueueJob constructor.

@@ -11,7 +11,6 @@ class CollectingConsumer implements Consumer
 
     public function handle(Message $message)
     {
-        dd('handle');
         $this->message = $message;
     }
 }
