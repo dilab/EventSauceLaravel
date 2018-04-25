@@ -2,7 +2,6 @@
   "name": "dilab/event-sauce-laravel",
   "description": "Laravel Package for EventSauce",
   "keywords": ["EventSauce", "Laravel"],
-  "type": "project",
   "autoload": {
     "psr-4": {
       "Dilab\\EventSauceLaravel\\": "src/"
